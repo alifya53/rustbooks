@@ -1,0 +1,402 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js">
+    
+<!-- Mirrored from docs.rust-embedded.org/discovery/07-registers/optimization.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 03 Nov 2019 13:54:06 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>(mis)Optimization - </title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+    </head>
+    <body class="light">
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">var path_to_root = "../index.html";</script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
+            if (theme === null || theme === undefined) { theme = 'light'; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme + ' js';
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <ol class="chapter"><li class="affix"><a href="../index-2.html">Introduction</a></li><li><a href="../01-background/index.html"><strong aria-hidden="true">1.</strong> Background</a></li><li><a href="../02-requirements/index.html"><strong aria-hidden="true">2.</strong> Hardware/knowledge requirements</a></li><li><a href="../03-setup/index.html"><strong aria-hidden="true">3.</strong> Setting up a development environment</a></li><li><ol class="section"><li><a href="../03-setup/linux.html"><strong aria-hidden="true">3.1.</strong> Linux</a></li><li><a href="../03-setup/windows.html"><strong aria-hidden="true">3.2.</strong> Windows</a></li><li><a href="../03-setup/macos.html"><strong aria-hidden="true">3.3.</strong> macOS</a></li><li><a href="../03-setup/verify.html"><strong aria-hidden="true">3.4.</strong> Verify the installation</a></li></ol></li><li><a href="../04-meet-your-hardware/index.html"><strong aria-hidden="true">4.</strong> Meet your hardware</a></li><li><a href="../05-led-roulette/index.html"><strong aria-hidden="true">5.</strong> LED roulette</a></li><li><ol class="section"><li><a href="../05-led-roulette/build-it.html"><strong aria-hidden="true">5.1.</strong> Build it</a></li><li><a href="../05-led-roulette/flash-it.html"><strong aria-hidden="true">5.2.</strong> Flash it</a></li><li><a href="../05-led-roulette/debug-it.html"><strong aria-hidden="true">5.3.</strong> Debug it</a></li><li><a href="../05-led-roulette/the-led-and-delay-abstractions.html"><strong aria-hidden="true">5.4.</strong> The led and delay abstractions</a></li><li><a href="../05-led-roulette/the-challenge.html"><strong aria-hidden="true">5.5.</strong> The challenge</a></li><li><a href="../05-led-roulette/my-solution.html"><strong aria-hidden="true">5.6.</strong> My solution</a></li></ol></li><li><a href="../06-hello-world/index.html"><strong aria-hidden="true">6.</strong> Hello, world!</a></li><li><ol class="section"><li><a href="../06-hello-world/panic.html"><strong aria-hidden="true">6.1.</strong> panic!</a></li></ol></li><li><a href="index.html"><strong aria-hidden="true">7.</strong> Registers</a></li><li><ol class="section"><li><a href="rtrm.html"><strong aria-hidden="true">7.1.</strong> RTRM</a></li><li><a href="optimization.html" class="active"><strong aria-hidden="true">7.2.</strong> (mis)Optimization</a></li><li><a href="bad-address.html"><strong aria-hidden="true">7.3.</strong> 0xBAAAAAAD address</a></li><li><a href="spooky-action-at-a-distance.html"><strong aria-hidden="true">7.4.</strong> Spooky action at a distance</a></li><li><a href="type-safe-manipulation.html"><strong aria-hidden="true">7.5.</strong> Type safe manipulation</a></li></ol></li><li><a href="../08-leds-again/index.html"><strong aria-hidden="true">8.</strong> LEDs, again</a></li><li><ol class="section"><li><a href="../08-leds-again/power.html"><strong aria-hidden="true">8.1.</strong> Power</a></li><li><a href="../08-leds-again/configuration.html"><strong aria-hidden="true">8.2.</strong> Configuration</a></li><li><a href="../08-leds-again/the-solution.html"><strong aria-hidden="true">8.3.</strong> The solution</a></li></ol></li><li><a href="../09-clocks-and-timers/index.html"><strong aria-hidden="true">9.</strong> Clocks and timers</a></li><li><ol class="section"><li><a href="../09-clocks-and-timers/for-loop-delays.html"><strong aria-hidden="true">9.1.</strong> for loop delays</a></li><li><a href="../09-clocks-and-timers/nop.html"><strong aria-hidden="true">9.2.</strong> NOP</a></li><li><a href="../09-clocks-and-timers/one-shot-timer.html"><strong aria-hidden="true">9.3.</strong> One-shot timer</a></li><li><a href="../09-clocks-and-timers/initialization.html"><strong aria-hidden="true">9.4.</strong> Initialization</a></li><li><a href="../09-clocks-and-timers/busy-waiting.html"><strong aria-hidden="true">9.5.</strong> Busy waiting</a></li><li><a href="../09-clocks-and-timers/putting-it-all-together.html"><strong aria-hidden="true">9.6.</strong> Putting it all together</a></li></ol></li><li><a href="../10-serial-communication/index.html"><strong aria-hidden="true">10.</strong> Serial communication</a></li><li><ol class="section"><li><a href="../10-serial-communication/nix-tooling.html"><strong aria-hidden="true">10.1.</strong> *nix tooling</a></li><li><a href="../10-serial-communication/windows-tooling.html"><strong aria-hidden="true">10.2.</strong> Windows tooling</a></li><li><a href="../10-serial-communication/loopbacks.html"><strong aria-hidden="true">10.3.</strong> Loopbacks</a></li></ol></li><li><a href="../11-usart/index.html"><strong aria-hidden="true">11.</strong> USART</a></li><li><ol class="section"><li><a href="../11-usart/send-a-single-byte.html"><strong aria-hidden="true">11.1.</strong> Send a single byte</a></li><li><a href="../11-usart/send-a-string.html"><strong aria-hidden="true">11.2.</strong> Send a string</a></li><li><a href="../11-usart/buffer-overrun.html"><strong aria-hidden="true">11.3.</strong> Buffer overrun</a></li><li><a href="../11-usart/uprintln.html"><strong aria-hidden="true">11.4.</strong> uprintln!</a></li><li><a href="../11-usart/receive-a-single-byte.html"><strong aria-hidden="true">11.5.</strong> Receive a single byte</a></li><li><a href="../11-usart/echo-server.html"><strong aria-hidden="true">11.6.</strong> Echo server</a></li><li><a href="../11-usart/reverse-a-string.html"><strong aria-hidden="true">11.7.</strong> Reverse a string</a></li><li><a href="../11-usart/my-solution.html"><strong aria-hidden="true">11.8.</strong> My solution</a></li></ol></li><li><a href="../12-bluetooth-setup/index.html"><strong aria-hidden="true">12.</strong> Bluetooth setup</a></li><li><ol class="section"><li><a href="../12-bluetooth-setup/linux.html"><strong aria-hidden="true">12.1.</strong> Linux</a></li><li><a href="../12-bluetooth-setup/loopback.html"><strong aria-hidden="true">12.2.</strong> Loopback</a></li></ol></li><li><a href="../13-serial-over-bluetooth/index.html"><strong aria-hidden="true">13.</strong> Serial over Bluetooth</a></li><li><a href="../14-i2c/index.html"><strong aria-hidden="true">14.</strong> I2C</a></li><li><ol class="section"><li><a href="../14-i2c/the-general-protocol.html"><strong aria-hidden="true">14.1.</strong> The general protocol</a></li><li><a href="../14-i2c/lsm303dlhc.html"><strong aria-hidden="true">14.2.</strong> LSM303DLHC</a></li><li><a href="../14-i2c/read-a-single-register.html"><strong aria-hidden="true">14.3.</strong> Read a single register</a></li><li><a href="../14-i2c/the-solution.html"><strong aria-hidden="true">14.4.</strong> The solution</a></li><li><a href="../14-i2c/read-several-registers.html"><strong aria-hidden="true">14.5.</strong> Read several registers</a></li></ol></li><li><a href="../15-led-compass/index.html"><strong aria-hidden="true">15.</strong> LED compass</a></li><li><ol class="section"><li><a href="../15-led-compass/take-1.html"><strong aria-hidden="true">15.1.</strong> Take 1</a></li><li><a href="../15-led-compass/solution-1.html"><strong aria-hidden="true">15.2.</strong> Solution 1</a></li><li><a href="../15-led-compass/take-2.html"><strong aria-hidden="true">15.3.</strong> Take 2</a></li><li><a href="../15-led-compass/solution-2.html"><strong aria-hidden="true">15.4.</strong> Solution 2</a></li><li><a href="../15-led-compass/magnitude.html"><strong aria-hidden="true">15.5.</strong> Magnitude</a></li><li><a href="../15-led-compass/calibration.html"><strong aria-hidden="true">15.6.</strong> Calibration</a></li></ol></li><li><a href="../16-punch-o-meter/index.html"><strong aria-hidden="true">16.</strong> Punch-o-meter</a></li><li><ol class="section"><li><a href="../16-punch-o-meter/gravity-is-up.html"><strong aria-hidden="true">16.1.</strong> Gravity is up?</a></li><li><a href="../16-punch-o-meter/the-challenge.html"><strong aria-hidden="true">16.2.</strong> The challenge</a></li><li><a href="../16-punch-o-meter/my-solution.html"><strong aria-hidden="true">16.3.</strong> My solution</a></li></ol></li><li><a href="../explore.html"><strong aria-hidden="true">17.</strong> What's left for you to explore</a></li><li class="spacer"></li><li class="affix"><a href="../appendix/1-general-troubleshooting/index.html">General troubleshooting</a></li></ol>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light <span class="default">(default)</span></button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            
+                        </div>
+
+                        <h1 class="menu-title"></h1> 
+
+                        <div class="right-buttons">
+                            <a href="../print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <a class="header" href="#misoptimization" id="misoptimization"><h1>(mis)Optimization</h1></a>
+<p>Reads/writes to registers are quite special. I may even dare to say that they are embodiment of side
+effects. In the previous example we wrote four different values to the same register. If you didn't
+know that address was a register, you may have simplified the logic to just write the final value <code>1 &lt;&lt; (11 + 16)</code> into the register.</p>
+<p>Actually, LLVM, the compiler's backend / optimizer, does not know we are dealing with a register and
+will merge the writes thus changing the behavior of our program. Let's check that really quick.</p>
+<pre><code class="language-console">$ cargo run --release
+(..)
+Breakpoint 1, main () at src/07-registers/src/main.rs:9
+9           aux7::init();
+
+(gdb) next
+25              *(GPIOE_BSRR as *mut u32) = 1 &lt;&lt; (11 + 16);
+
+(gdb) disassemble /m
+Dump of assembler code for function main:
+7       #[entry]
+
+8       fn main() -&gt; ! {
+9           aux7::init();
+   0x08000188 &lt;+0&gt;:     bl      0x800019c &lt;aux7::init&gt;
+   0x0800018c &lt;+4&gt;:     movw    r0, #4120       ; 0x1018
+   0x08000190 &lt;+8&gt;:     mov.w   r1, #134217728  ; 0x8000000
+   0x08000194 &lt;+12&gt;:    movt    r0, #18432      ; 0x4800
+
+10
+11          unsafe {
+12              // A magic address!
+13              const GPIOE_BSRR: u32 = 0x48001018;
+14
+15              // Turn on the &quot;North&quot; LED (red)
+16              *(GPIOE_BSRR as *mut u32) = 1 &lt;&lt; 9;
+17
+18              // Turn on the &quot;East&quot; LED (green)
+19              *(GPIOE_BSRR as *mut u32) = 1 &lt;&lt; 11;
+20
+21              // Turn off the &quot;North&quot; LED
+22              *(GPIOE_BSRR as *mut u32) = 1 &lt;&lt; (9 + 16);
+23
+24              // Turn off the &quot;East&quot; LED
+25              *(GPIOE_BSRR as *mut u32) = 1 &lt;&lt; (11 + 16);
+=&gt; 0x08000198 &lt;+16&gt;:    str     r1, [r0, #0]
+
+26          }
+27
+28          loop {}
+   0x0800019a &lt;+18&gt;:    b.n     0x800019a &lt;main+18&gt;
+
+End of assembler dump.
+</code></pre>
+<p>The state of the LEDs didn't change this time! The <code>str</code> instruction is the one that writes a value
+to the register. Our <em>debug</em> (unoptimized) program had four of them, one for each write to the
+register, but the <em>release</em> (optimized) program only has one.</p>
+<p>We can check that using <code>objdump</code>:</p>
+<pre><code class="language-console">$ # same as cargo objdump -- -d -no-show-raw-insn -print-imm-hex -source target/thumbv7em-none-eabihf/debug/registers
+$ cargo objdump --bin registers -- -d -no-show-raw-insn -print-imm-hex -source
+registers:      file format ELF32-arm-little
+
+Disassembly of section .text:
+main:
+; #[entry]
+ 8000188:       sub     sp, #0x18
+; aux7::init();
+ 800018a:       bl      #0xbc
+ 800018e:       str     r0, [sp, #0x14]
+ 8000190:       b       #-0x2 &lt;main+0xa&gt;
+; *(GPIOE_BSRR as *mut u32) = 1 &lt;&lt; 9;
+ 8000192:       b       #-0x2 &lt;main+0xc&gt;
+ 8000194:       movw    r0, #0x1018
+ 8000198:       movt    r0, #0x4800
+ 800019c:       mov.w   r1, #0x200
+ 80001a0:       str     r1, [r0]
+; *(GPIOE_BSRR as *mut u32) = 1 &lt;&lt; 11;
+ 80001a2:       b       #-0x2 &lt;main+0x1c&gt;
+ 80001a4:       movw    r0, #0x1018
+ 80001a8:       movt    r0, #0x4800
+ 80001ac:       mov.w   r1, #0x800
+ 80001b0:       str     r1, [r0]
+ 80001b2:       movs    r0, #0x19
+; *(GPIOE_BSRR as *mut u32) = 1 &lt;&lt; (9 + 16);
+ 80001b4:       mov     r1, r0
+ 80001b6:       cmp     r0, #0x9
+ 80001b8:       str     r1, [sp, #0x10]
+ 80001ba:       bvs     #0x54 &lt;main+0x8a&gt;
+ 80001bc:       b       #-0x2 &lt;main+0x36&gt;
+ 80001be:       ldr     r0, [sp, #0x10]
+ 80001c0:       and     r1, r0, #0x1f
+ 80001c4:       movs    r2, #0x1
+ 80001c6:       lsl.w   r1, r2, r1
+ 80001ca:       lsrs    r2, r0, #0x5
+ 80001cc:       cmp     r2, #0x0
+ 80001ce:       str     r1, [sp, #0xc]
+ 80001d0:       bne     #0x4c &lt;main+0x98&gt;
+ 80001d2:       b       #-0x2 &lt;main+0x4c&gt;
+ 80001d4:       movw    r0, #0x1018
+ 80001d8:       movt    r0, #0x4800
+ 80001dc:       ldr     r1, [sp, #0xc]
+ 80001de:       str     r1, [r0]
+ 80001e0:       movs    r0, #0x1b
+; *(GPIOE_BSRR as *mut u32) = 1 &lt;&lt; (11 + 16);
+ 80001e2:       mov     r2, r0
+ 80001e4:       cmp     r0, #0xb
+ 80001e6:       str     r2, [sp, #0x8]
+ 80001e8:       bvs     #0x42 &lt;main+0xa6&gt;
+ 80001ea:       b       #-0x2 &lt;main+0x64&gt;
+ 80001ec:       ldr     r0, [sp, #0x8]
+ 80001ee:       and     r1, r0, #0x1f
+ 80001f2:       movs    r2, #0x1
+ 80001f4:       lsl.w   r1, r2, r1
+ 80001f8:       lsrs    r2, r0, #0x5
+ 80001fa:       cmp     r2, #0x0
+ 80001fc:       str     r1, [sp, #0x4]
+ 80001fe:       bne     #0x3a &lt;main+0xb4&gt;
+ 8000200:       b       #-0x2 &lt;main+0x7a&gt;
+ 8000202:       movw    r0, #0x1018
+ 8000206:       movt    r0, #0x4800
+ 800020a:       ldr     r1, [sp, #0x4]
+ 800020c:       str     r1, [r0]
+; loop {}
+ 800020e:       b       #-0x2 &lt;main+0x88&gt;
+ 8000210:       b       #-0x4 &lt;main+0x88&gt;
+; *(GPIOE_BSRR as *mut u32) = 1 &lt;&lt; (9 + 16);
+ 8000212:       movw    r0, #0x41bc
+ 8000216:       movt    r0, #0x800
+ 800021a:       bl      #0x3b28
+ 800021e:       trap
+ 8000220:       movw    r0, #0x4204
+ 8000224:       movt    r0, #0x800
+ 8000228:       bl      #0x3b1a
+ 800022c:       trap
+; *(GPIOE_BSRR as *mut u32) = 1 &lt;&lt; (11 + 16);
+ 800022e:       movw    r0, #0x421c
+ 8000232:       movt    r0, #0x800
+ 8000236:       bl      #0x3b0c
+ 800023a:       trap
+ 800023c:       movw    r0, #0x4234
+ 8000240:       movt    r0, #0x800
+ 8000244:       bl      #0x3afe
+ 8000248:       trap
+</code></pre>
+<p>How do we prevent LLVM from misoptimizing our program? We use <em>volatile</em> operations instead of plain
+reads/writes:</p>
+<pre><pre class="playpen"><code class="language-rust">#![no_main]
+#![no_std]
+
+use core::ptr;
+
+#[allow(unused_imports)]
+use aux7::{entry, iprint, iprintln};
+
+#[entry]
+fn main() -&gt; ! {
+    aux7::init();
+
+    unsafe {
+        // A magic address!
+        const GPIOE_BSRR: u32 = 0x48001018;
+
+        // Turn on the &quot;North&quot; LED (red)
+        ptr::write_volatile(GPIOE_BSRR as *mut u32, 1 &lt;&lt; 9);
+
+        // Turn on the &quot;East&quot; LED (green)
+        ptr::write_volatile(GPIOE_BSRR as *mut u32, 1 &lt;&lt; 11);
+
+        // Turn off the &quot;North&quot; LED
+        ptr::write_volatile(GPIOE_BSRR as *mut u32, 1 &lt;&lt; (9 + 16));
+
+        // Turn off the &quot;East&quot; LED
+        ptr::write_volatile(GPIOE_BSRR as *mut u32, 1 &lt;&lt; (11 + 16));
+    }
+
+    loop {}
+}
+</code></pre></pre>
+<p>If we look at the disassembly of this new program compiled in release mode:</p>
+<pre><code class="language-console">$ cargo objdump --bin registers --release -- -d -no-show-raw-insn -print-imm-hex -source
+registers:      file format ELF32-arm-little
+
+Disassembly of section .text:
+main:
+; #[entry]
+ 8000188:       bl      #0x22
+; aux7::init();
+ 800018c:       movw    r0, #0x1018
+ 8000190:       mov.w   r1, #0x200
+ 8000194:       movt    r0, #0x4800
+ 8000198:       str     r1, [r0]
+ 800019a:       mov.w   r1, #0x800
+ 800019e:       str     r1, [r0]
+ 80001a0:       mov.w   r1, #0x2000000
+ 80001a4:       str     r1, [r0]
+ 80001a6:       mov.w   r1, #0x8000000
+ 80001aa:       str     r1, [r0]
+; loop {}
+ 80001ac:       b       #-0x4 &lt;main+0x24&gt;
+</code></pre>
+<p>We see that the four writes (<code>str</code> instructions) are preserved. If you run it (use <code>stepi</code>), you'll
+also see that behavior of the program is preserved.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="rtrm.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="bad-address.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="rtrm.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a href="bad-address.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+
+        
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+
+    </body>
+
+<!-- Mirrored from docs.rust-embedded.org/discovery/07-registers/optimization.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 03 Nov 2019 13:54:06 GMT -->
+</html>
